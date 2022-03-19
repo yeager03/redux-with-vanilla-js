@@ -1,17 +1,49 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import { createStore, bindActionCreators } from "redux";
+import reducer from "./reducer";
+import * as actions from "./actions";
+
+const counter = document.querySelector(".counter"),
+	inc = document.querySelector("#inc"),
+	dec = document.querySelector("#dec"),
+	rnd = document.querySelector("#rnd"),
+	max = document.querySelector("#max");
+
+// our redux store
+const store = createStore(reducer);
+const { dispatch, subscribe, getState } = store;
+
+// const bindActionCreator =
+// 	(creator, dispatch) =>
+// 	(...args) => {
+// 		dispatch(creator(...args));
+// 	};
+
+// actions
+const { incAction, decAction, rndAction } = bindActionCreators(actions, dispatch);
+
+// listeners
+inc.addEventListener("click", incAction);
+
+dec.addEventListener("click", decAction);
+
+rnd.addEventListener("click", () => {
+	if (max.value === "") {
+		alert("Type max and min numb!");
+		return;
+	}
+	const random = Math.floor(Math.random() * max.value);
+	rndAction(random);
+});
+
+// subscribe on changes in store
+const updateUI = () => (counter.textContent = getState().value);
+subscribe(updateUI); // method subscribe for updating our UI
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+	<React.StrictMode>
+		<></>
+	</React.StrictMode>,
+	document.getElementById("root")
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
